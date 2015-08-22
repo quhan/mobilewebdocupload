@@ -1,0 +1,13 @@
+{
+  "generator-kraken": {
+    "taskModule": "grunt",
+    "description": "Mobile-first webapp for document uploads",
+    "author": "Quhan Arunasalam",
+    "templateModule": "dustjs",
+    "i18n": false,
+    "componentPackager": false,
+    "cssModule": "less",
+    "jsModule": false,
+    "useJson": null
+  }
+}
