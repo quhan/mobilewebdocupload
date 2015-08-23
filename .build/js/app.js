@@ -1,6 +1,7 @@
 'use strict';
 /* global $:false, document:false, window:false */
 var imageType = /^image\//;
+var files = [];
 
 $(document).ready(function () {
 
@@ -27,8 +28,6 @@ $(document).ready(function () {
 
 	$cameraHeroBtn.click(function () {
 		$fileInput.click();
-		$(this).addClass('hide');
-		$uploadControls.removeClass('hide');
 	});
 
 	$cameraBtn.click(function () {
@@ -49,7 +48,15 @@ $(document).ready(function () {
 			// TODO: Show generic file
 			addThumbnail('http://41.media.tumblr.com/16827d6a4b41ebb817c5a4a5d46baffc/tumblr_inline_nr4g6f4glB1rhj1f1_1280.png');
 		}
+
+		files.push(file);
+		showUploadControls();
 	});
+
+	function showUploadControls() {
+		$cameraHeroBtn.addClass('hide');
+		$uploadControls.removeClass('hide');
+	}
 
 	$submitBtn.click(function () {
 		goToSummaryPage();
