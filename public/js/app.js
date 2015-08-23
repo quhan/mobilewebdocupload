@@ -36,9 +36,6 @@ $(document).ready(function () {
 
 	$fileInput.change(function (event) {
 		var file = $(this).get(0).files[0];
-		console.log('file.name:', file.name);
-		console.log('file.type:', file.type);
-		console.log('file.size:', file.size);
 
 		if (imageType.test(file.type)) {
 			// Generate thumbnail
@@ -53,25 +50,8 @@ $(document).ready(function () {
 		showUploadControls();
 	});
 
-	function showUploadControls() {
-		$cameraHeroBtn.addClass('hide');
-		$uploadControls.removeClass('hide');
-	}
-
 	$submitBtn.click(function () {
 		goToSummaryPage();
-	});
-
-	$(document).onPage('show', '#intro', function () {
-		// console.log('onPage.show: intro');
-	});
-
-	$(document).onPage('show', '#upload', function () {
-		// console.log('onPage.show: upload');
-	});
-
-	$(document).onPage('show', '#summary', function () {
-		// console.log('onPage.show: summary');
 	});
 
 	function addThumbnail(url) {
@@ -79,8 +59,9 @@ $(document).ready(function () {
 		$(thumbnail).appendTo($thumbnails).hide().fadeIn(250);
 	}
 
-	function getPageId() {
-		return $pageContainer.pagecontainer('getActivePage').attr('id');
+	function showUploadControls() {
+		$cameraHeroBtn.addClass('hide');
+		$uploadControls.removeClass('hide');
 	}
 
 	function goToUploadPage(applicationType) {
