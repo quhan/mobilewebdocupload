@@ -7,6 +7,7 @@ $(document).ready(function () {
 
 	var $uploadControls = $('#uploadcontrols'),
 		$cameraHeroBtn = $('#camerahero'),
+		$thumbnails = $uploadControls.find('#thumbnails'),
 		$cameraBtn = $uploadControls.find('#camera'),
 		$submitBtn = $uploadControls.find('#submit');
 
@@ -20,8 +21,13 @@ $(document).ready(function () {
 	});
 
 	$cameraHeroBtn.click(function () {
-		$uploadControls.removeClass('hide');
 		$(this).addClass('hide');
+		$uploadControls.removeClass('hide');
+		addThumbnail();
+	});
+
+	$cameraBtn.click(function () {
+		addThumbnail();
 	});
 
 	$submitBtn.click(function () {
@@ -39,6 +45,11 @@ $(document).ready(function () {
 	$(document).onPage('show', '#summary', function () {
 		// console.log('onPage.show: summary');
 	});
+
+	function addThumbnail() {
+		var thumbnail = '<div class="thumbnail"><img src="http://41.media.tumblr.com/16827d6a4b41ebb817c5a4a5d46baffc/tumblr_inline_nr4g6f4glB1rhj1f1_1280.png" /></div>';
+		$(thumbnail).appendTo($thumbnails).hide().fadeIn(250);
+	}
 
 	function getPageId() {
 		return $pageContainer.pagecontainer('getActivePage').attr('id');

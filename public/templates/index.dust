@@ -23,11 +23,7 @@
 		<button class="ui-btn" id="camerahero">Camera</button>
 
 		<fieldset class="ui-grid-a hide" id="uploadcontrols">
-			<div class="ui-block-solo">
-				<div class="thumbnail">
-					<img src="http://41.media.tumblr.com/16827d6a4b41ebb817c5a4a5d46baffc/tumblr_inline_nr4g6f4glB1rhj1f1_1280.png" />
-				</div>
-			</div>
+			<div class="ui-block-solo" id="thumbnails"></div>
 			<div class="ui-block-a">
 				<button class="ui-btn" id="camera">Camera</button>
 			</div>
