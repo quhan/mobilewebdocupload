@@ -1,7 +1,7 @@
 'use strict';
-/* global $:false, document:false, window:false */
+/* global $:false, document:false, window:false, FormData:false */
 var imageType = /^image\//;
-var files = [];
+var formData = new FormData();
 
 $(document).ready(function () {
 
@@ -46,7 +46,7 @@ $(document).ready(function () {
 			addThumbnail('http://41.media.tumblr.com/16827d6a4b41ebb817c5a4a5d46baffc/tumblr_inline_nr4g6f4glB1rhj1f1_1280.png');
 		}
 
-		files.push(file);
+		formData.append('files', file);
 		showUploadControls();
 	});
 
