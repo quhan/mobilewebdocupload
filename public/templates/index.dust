@@ -41,7 +41,9 @@
 <div data-role="page" id="summary">
 	{>"layouts/header" /}
 	<div role="main" class="ui-content">
-		<p>...</p>
+		<p>Your resume has been successfully uploaded!</p>
+		<p>We will review your application and contact you if there's a match</p>
+		<p>Thank you!</p>
 	</div>
 </div>
 

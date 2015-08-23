@@ -1,14 +1,11 @@
-/* line 1, css/app */
 .hide {
   display: none;
 }
-/* line 5, css/app */
 .thumbnail {
   width: 50%;
   margin: 0 auto 20px;
   border: 10px solid #ddd;
 }
-/* line 10, css/app */
 .thumbnail img {
   width: 100%;
 }
