@@ -5,6 +5,10 @@ $(document).ready(function () {
 
 	var $pageContainer = $(':mobile-pagecontainer');
 
+	var $uploadForm = $('#uploadform'),
+		$applicationType = $uploadForm.find('#applicationtype'),
+		$fileInput = $uploadForm.find('#file');
+
 	var $uploadControls = $('#uploadcontrols'),
 		$cameraHeroBtn = $('#camerahero'),
 		$thumbnails = $uploadControls.find('#thumbnails'),
@@ -21,13 +25,19 @@ $(document).ready(function () {
 	});
 
 	$cameraHeroBtn.click(function () {
+		$fileInput.click();
 		$(this).addClass('hide');
 		$uploadControls.removeClass('hide');
 		addThumbnail();
 	});
 
 	$cameraBtn.click(function () {
+		$fileInput.click();
 		addThumbnail();
+	});
+
+	$fileInput.change(function (event) {
+		console.log($(this).val());
 	});
 
 	$submitBtn.click(function () {
@@ -56,7 +66,7 @@ $(document).ready(function () {
 	}
 
 	function goToUploadPage(applicationType) {
-		$('#applicationtype').val(applicationType);
+		$applicationType.val(applicationType);
 		$pageContainer.pagecontainer('change', '#upload', {changeHash: false, transition: 'slide'});
 	}
 

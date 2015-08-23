@@ -18,6 +18,7 @@
 		<h2>Upload your resume</h2>
 		<form id="uploadform" name="uploadform" enctype="multipart/form-data">
 			<input type="hidden" id="applicationtype" name="applicationtype" />
+			<input type="file" id="file" name="file" data-role="none" class="hide" />
 		</form>
 
 		<button class="ui-btn" id="camerahero">Camera</button>
