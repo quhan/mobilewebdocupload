@@ -1,5 +1,6 @@
 'use strict';
-/* global $:false, document:false */
+/* global $:false, document:false, window:false */
+var imageType = /^image\//;
 
 $(document).ready(function () {
 
@@ -28,16 +29,26 @@ $(document).ready(function () {
 		$fileInput.click();
 		$(this).addClass('hide');
 		$uploadControls.removeClass('hide');
-		addThumbnail();
 	});
 
 	$cameraBtn.click(function () {
 		$fileInput.click();
-		addThumbnail();
 	});
 
 	$fileInput.change(function (event) {
-		console.log($(this).val());
+		var file = $(this).get(0).files[0];
+		console.log('file.name:', file.name);
+		console.log('file.type:', file.type);
+		console.log('file.size:', file.size);
+
+		if (imageType.test(file.type)) {
+			// Generate thumbnail
+			var thumbnailURL = window.URL.createObjectURL(file);
+			addThumbnail(thumbnailURL);
+		} else {
+			// TODO: Show generic file
+			addThumbnail('http://41.media.tumblr.com/16827d6a4b41ebb817c5a4a5d46baffc/tumblr_inline_nr4g6f4glB1rhj1f1_1280.png');
+		}
 	});
 
 	$submitBtn.click(function () {
@@ -56,8 +67,8 @@ $(document).ready(function () {
 		// console.log('onPage.show: summary');
 	});
 
-	function addThumbnail() {
-		var thumbnail = '<div class="thumbnail"><img src="http://41.media.tumblr.com/16827d6a4b41ebb817c5a4a5d46baffc/tumblr_inline_nr4g6f4glB1rhj1f1_1280.png" /></div>';
+	function addThumbnail(url) {
+		var thumbnail = '<div class="thumbnail"><img src="' + url + '" /></div>';
 		$(thumbnail).appendTo($thumbnails).hide().fadeIn(250);
 	}
 
