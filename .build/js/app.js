@@ -5,6 +5,11 @@ $(document).ready(function () {
 
 	var $pageContainer = $(':mobile-pagecontainer');
 
+	var $uploadControls = $('#uploadcontrols'),
+		$cameraHeroBtn = $('#camerahero'),
+		$cameraBtn = $uploadControls.find('#camera'),
+		$submitBtn = $uploadControls.find('#submit');
+
 	// Attach listeners to Application Type buttons
 	$('.js-application-type').click(function () {
 		var applicationType = $(this).data('applicationtype');
@@ -12,6 +17,15 @@ $(document).ready(function () {
 		if (applicationType) {
 			goToUploadPage(applicationType);
 		}
+	});
+
+	$cameraHeroBtn.click(function () {
+		$uploadControls.removeClass('hide');
+		$(this).addClass('hide');
+	});
+
+	$submitBtn.click(function () {
+		goToSummaryPage();
 	});
 
 	$(document).onPage('show', '#intro', function () {
@@ -33,5 +47,9 @@ $(document).ready(function () {
 	function goToUploadPage(applicationType) {
 		$('#applicationtype').val(applicationType);
 		$pageContainer.pagecontainer('change', '#upload', {changeHash: false, transition: 'slide'});
+	}
+
+	function goToSummaryPage() {
+		$pageContainer.pagecontainer('change', '#summary', {changeHash: false, transition: 'slide'});
 	}
 });
