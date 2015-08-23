@@ -14,6 +14,18 @@ $(document).ready(function () {
 		}
 	});
 
+	$(document).onPage('show', '#intro', function () {
+		// console.log('onPage.show: intro');
+	});
+
+	$(document).onPage('show', '#upload', function () {
+		// console.log('onPage.show: upload');
+	});
+
+	$(document).onPage('show', '#summary', function () {
+		// console.log('onPage.show: summary');
+	});
+
 	function getPageId() {
 		return $pageContainer.pagecontainer('getActivePage').attr('id');
 	}
