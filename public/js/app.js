@@ -1,5 +1,5 @@
 'use strict';
-/* global $:false, document:false, window:false, FormData:false */
+/* global $:false, document:false, window:false, alert:false, FormData:false */
 
 var imageType = /^image\//;
 var MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
