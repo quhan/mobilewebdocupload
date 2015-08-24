@@ -41,6 +41,11 @@ $(document).ready(function () {
         $fileInput.click();
     });
 
+    // Allows choosing the same file again
+    $fileInput.on('click', function () {
+        this.value = null;
+    });
+
     $fileInput.change(function (event) {
         var file = $(this).get(0).files[0];
 
