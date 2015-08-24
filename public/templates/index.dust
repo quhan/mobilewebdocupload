@@ -39,7 +39,7 @@
 	{>"layouts/header" /}
 	<div role="main" class="ui-content">
 		<p>Your resume has been successfully uploaded!</p>
-		<p>We will review your application and contact you if there's a match</p>
+		<p>We will review your application and contact you if there's a match.</p>
 		<p>Thank you!</p>
 	</div>
 </div>
