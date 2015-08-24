@@ -51,13 +51,11 @@ $(document).ready(function () {
 
         // Test for supported files
         if (!SUPPORTED_FILE_MIME_TYPES.test(file.type)) {
-            // TODO: Handle unsupported files
             return alert('File unsupported!');
         }
 
         // Test for file size limits
         if (totalFileSize + file.size > MAX_FILE_SIZE) {
-            // TODO: Handle total file size
             return alert('Exceeded total file size limit!');
         }
 
@@ -117,7 +115,6 @@ $(document).ready(function () {
         for (var i = 0; i < files.length; i++) {
             totalFileSize += files[i].file.size;
         }
-        console.log('totalFileSize:', totalFileSize);
     }
 
     function showUploadControls() {
