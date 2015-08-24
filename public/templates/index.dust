@@ -17,6 +17,7 @@
 	<div role="main" class="ui-content">
 		<h2>Upload your resume</h2>
 		<form id="uploadform" name="uploadform" enctype="multipart/form-data">
+            <input type="hidden" id="_csrf" name="_csrf" value="{_csrf}" />
 			<input type="hidden" id="applicationtype" name="applicationtype" />
 			<input type="file" id="file" name="file" data-role="none" class="hide" accept="image/*,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" />
 		</form>
