@@ -20,7 +20,7 @@ $(document).ready(function () {
 	// Attach listeners to Application Type buttons
 	$('.js-application-type').click(function () {
 		var applicationType = $(this).data('applicationtype');
-		
+
 		if (applicationType) {
 			goToUploadPage(applicationType);
 		}
@@ -55,7 +55,7 @@ $(document).ready(function () {
 	});
 
 	function addThumbnail(url) {
-		var thumbnail = '<div class="thumbnail"><img src="' + url + '" /></div>';
+		var thumbnail = '<div class="thumbnail"><a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext remove">Remove</a><img src="' + url + '" /></div>';
 		$(thumbnail).appendTo($thumbnails).hide().fadeIn(250);
 	}
 
