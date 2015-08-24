@@ -2,8 +2,13 @@
 /* global $:false, document:false, window:false, FormData:false */
 
 var imageType = /^image\//;
+var MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
+var SUPPORTED_IMG_MIME_TYPES = new RegExp('image\/(?=jpeg|pjpeg|gif|png)'); // JPG, GIF, PNG
+var SUPPORTED_FILE_MIME_TYPES = new RegExp(SUPPORTED_IMG_MIME_TYPES.source + '|application\/pdf|pplication\/msword|application\/vnd.openxmlformats-officedocument.wordprocessingml.document'); // ... + PDF, DOC, DOCX
+
 // var formData = new FormData();
 var files = [];
+var totalFileSize = 0;
 
 $(document).ready(function () {
 
@@ -39,11 +44,24 @@ $(document).ready(function () {
     $fileInput.change(function (event) {
         var file = $(this).get(0).files[0];
 
+        // Test for supported files
+        if (!SUPPORTED_FILE_MIME_TYPES.test(file.type)) {
+            // TODO: Handle unsupported files
+            return alert('File unsupported!');
+        }
+
+        // Test for file size limits
+        if (totalFileSize + file.size > MAX_FILE_SIZE) {
+            // TODO: Handle total file size
+            return alert('Exceeded total file size limit!');
+        }
+
         var uuid = guid();
         files.push({id: uuid, file: file});
+        updateTotalFileSize();
         // formData.append('files', file);
 
-        if (imageType.test(file.type)) {
+        if (SUPPORTED_IMG_MIME_TYPES.test(file.type)) {
             // Generate thumbnail
             var thumbnailURL = window.URL.createObjectURL(file);
             addThumbnail(uuid, thumbnailURL);
@@ -77,6 +95,7 @@ $(document).ready(function () {
             for (var i = 0; i < files.length; i++) {
                 if(files[i].id === uuid) {
                     files.splice(i, 1);
+                    updateTotalFileSize();
                     break;
                 }
             }
@@ -86,6 +105,14 @@ $(document).ready(function () {
                 hideUploadControls();
             }
         });
+    }
+
+    function updateTotalFileSize() {
+        totalFileSize = 0;
+        for (var i = 0; i < files.length; i++) {
+            totalFileSize += files[i].file.size;
+        }
+        console.log('totalFileSize:', totalFileSize);
     }
 
     function showUploadControls() {
