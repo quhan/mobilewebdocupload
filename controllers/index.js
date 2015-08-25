@@ -18,12 +18,10 @@ module.exports = function (router) {
 
     router.post('/upload', function (req, res) {
         var files = req.files;
-        var hasFiles = false;
         var totalFileSize = 0;
 
         for (var obj in files) {
             if (files.hasOwnProperty(obj)) {
-                hasFiles = true;
                 var file = files[obj];
                 console.log('file.name:', file.name);
                 console.log('file.size:', file.size);
@@ -33,15 +31,15 @@ module.exports = function (router) {
             }
         }
 
-        if (totalFileSize > MAX_FILE_SIZE) {
+        if (totalFileSize === 0) {
+            // No files detected
+            return res.status(500).json({});
+        } else if (totalFileSize > MAX_FILE_SIZE) {
+            // Total file sizes above the limit
             return res.status(413).json({});
         }
 
-        if (hasFiles) {
-            return res.status(200).json({});
-        } else {
-            return res.status(500).json({});
-        }
+        return res.status(200).json({});
     });
 
 };
