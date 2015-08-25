@@ -10,11 +10,11 @@ var SUPPORTED_IMG_MIME_TYPES = new RegExp('image\/(?=jpeg|pjpeg|gif|png)'); // J
 var SUPPORTED_FILE_MIME_TYPES = new RegExp(SUPPORTED_IMG_MIME_TYPES.source + '|application\/pdf|pplication\/msword|application\/vnd.openxmlformats-officedocument.wordprocessingml.document'); // ... + PDF, DOC, DOCX
 
 function getFileExtension(fileName) {
-    return fileName.substr(fileName.lastIndexOf('.')+1);
+    return fileName.substr(fileName.lastIndexOf('.') + 1);
 }
 
-function generateFileName(prefix, uniqueId, fileNumber, extension) {
-    return prefix + '_' + moment().format('YYMMDD') + '_' + uniqueId + '_' + fileNumber + '.' + extension;
+function generateFileName(prefix, timeStamp, uniqueId, fileNumber, extension) {
+    return prefix + '_' + timeStamp + '_' + uniqueId + '_' + fileNumber + '.' + extension;
 }
 
 module.exports = function (router) {
@@ -39,6 +39,7 @@ module.exports = function (router) {
 
         // Set the file prefix based on Application Type
         var filePrefix = (req.body && req.body.type === 'intern') ? 'INT' : 'DEV';
+        var fileTimeStamp = moment().format('YYMMDD');
         var fileUniqueId = shortid.generate();
 
         for (var obj in files) {
@@ -49,7 +50,13 @@ module.exports = function (router) {
                 // console.log('file.size:', file.size);
                 // console.log('file.type:', file.type);
                 // console.log('file.path:', file.path);
-                totalFileSize += file.size;
+
+                if (totalFileSize + file.size > MAX_FILE_SIZE) {
+                    // Total file sizes above the limit
+                    return res.status(413).json({});
+                } else {
+                    totalFileSize += file.size;
+                }
 
                 if (!SUPPORTED_FILE_MIME_TYPES.test(file.type)) {
                     // Invalid file detected
@@ -62,16 +69,13 @@ module.exports = function (router) {
                     nonImages.push(file);
                 }
 
-                console.log(generateFileName(filePrefix, fileUniqueId, fileNumber, getFileExtension(file.name)));
+                console.log(generateFileName(filePrefix, fileTimeStamp, fileUniqueId, fileNumber, getFileExtension(file.name)));
             }
         }
 
         if (totalFileSize === 0) {
             // No files detected
             return res.status(500).json({});
-        } else if (totalFileSize > MAX_FILE_SIZE) {
-            // Total file sizes above the limit
-            return res.status(413).json({});
         }
 
         return res.status(200).json({});
