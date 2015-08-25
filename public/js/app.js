@@ -86,6 +86,7 @@ $(document).ready(function () {
         }
 
         $.ajax({
+
             url: UPLOAD_URL,
             type: 'POST',
             data: formData,
@@ -103,15 +104,22 @@ $(document).ready(function () {
                 }, false);
                 return xhr;
             }
+
         }).done(function (result) {
+
             goToSummaryPage();
+
         }).fail(function (result) {
+
+            console.dir(result);
             if (result && result.status === 403) {
                 // To handle CSRF errors
                 return alert('Upload timed out: Please reload the page and try again.');
+            } else if (result && result.status === 500) {
+                // General error handler
+                return alert('An error has occured: Please try again later.');
             }
-            alert('Upload failed!');
-            console.dir(result);
+
         });
     });
 
