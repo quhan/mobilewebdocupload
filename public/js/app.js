@@ -1,12 +1,11 @@
 'use strict';
 /* global $:false, document:false, window:false, alert:false, FormData:false */
 
-var imageType = /^image\//;
 var MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
 var SUPPORTED_IMG_MIME_TYPES = new RegExp('image\/(?=jpeg|pjpeg|gif|png)'); // JPG, GIF, PNG
 var SUPPORTED_FILE_MIME_TYPES = new RegExp(SUPPORTED_IMG_MIME_TYPES.source + '|application\/pdf|pplication\/msword|application\/vnd.openxmlformats-officedocument.wordprocessingml.document'); // ... + PDF, DOC, DOCX
+var UPLOAD_URL = '/upload';
 
-// var formData = new FormData();
 var files = [];
 var totalFileSize = 0;
 
@@ -16,7 +15,8 @@ $(document).ready(function () {
 
     var $uploadForm = $('#uploadform'),
         $applicationType = $uploadForm.find('#applicationtype'),
-        $fileInput = $uploadForm.find('#file');
+        $fileInput = $uploadForm.find('#file'),
+        $csrf = $uploadForm.find('#_csrf');
 
     var $uploadControls = $('#uploadcontrols'),
         $cameraHeroBtn = $('#camerahero'),
@@ -46,7 +46,7 @@ $(document).ready(function () {
         this.value = null;
     });
 
-    $fileInput.change(function (event) {
+    $fileInput.change(function () {
         var file = $(this).get(0).files[0];
 
         // Test for supported files
@@ -77,7 +77,42 @@ $(document).ready(function () {
     });
 
     $submitBtn.click(function () {
-        goToSummaryPage();
+        var formData = new FormData();
+        formData.append('_csrf', $csrf.val());
+        formData.append('type', $applicationType.val());
+        for (var i = 0; i < files.length; i++) {
+            formData.append('files' + i, files[i].file);
+            console.log(files[i].file);
+        }
+
+        $.ajax({
+            url: UPLOAD_URL,
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            xhr: function() {
+                var xhr = new window.XMLHttpRequest();
+                xhr.upload.addEventListener('progress', function (event) {
+                    if (event.lengthComputable) {
+                        var percentComplete = (event.loaded / event.total) * 0.5,
+                            progress = Math.round(percentComplete * 100) + '%';
+                        // $progressCounter.text(progress);
+                        // $progressMeter.css({'width': progress});
+                    }
+                }, false);
+                return xhr;
+            }
+        }).done(function (result) {
+            goToSummaryPage();
+        }).fail(function (result) {
+            if (result && result.status === 403) {
+                // To handle CSRF errors
+                return alert('Upload timed out: Please reload the page and try again.');
+            }
+            alert('Upload failed!');
+            console.dir(result);
+        });
     });
 
     function addThumbnail(uuid, url) {
