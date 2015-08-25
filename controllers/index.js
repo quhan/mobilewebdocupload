@@ -13,8 +13,8 @@ function getFileExtension(fileName) {
     return fileName.substr(fileName.lastIndexOf('.')+1);
 }
 
-function generateFileName(prefix, extension) {
-    return prefix + '_' + moment().format('YYYYMMDD') + '_' + shortid.generate() + '.' + extension;
+function generateFileName(prefix, uniqueId, fileNumber, extension) {
+    return prefix + '_' + moment().format('YYMMDD') + '_' + uniqueId + '_' + fileNumber + '.' + extension;
 }
 
 module.exports = function (router) {
@@ -32,16 +32,19 @@ module.exports = function (router) {
     router.post('/upload', function (req, res) {
         var files = req.files;
         var totalFileSize = 0;
+        var fileNumber = 0;
 
         var images = [];
         var nonImages = [];
 
         // Set the file prefix based on Application Type
         var filePrefix = (req.body && req.body.type === 'intern') ? 'INT' : 'DEV';
+        var fileUniqueId = shortid.generate();
 
         for (var obj in files) {
             if (files.hasOwnProperty(obj)) {
                 var file = files[obj];
+                fileNumber += 1;
                 // console.log('file.name:', file.name);
                 // console.log('file.size:', file.size);
                 // console.log('file.type:', file.type);
@@ -59,7 +62,7 @@ module.exports = function (router) {
                     nonImages.push(file);
                 }
 
-                // console.log(generateFileName(filePrefix, getFileExtension(file.name)));
+                console.log(generateFileName(filePrefix, fileUniqueId, fileNumber, getFileExtension(file.name)));
             }
         }
 
