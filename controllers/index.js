@@ -2,6 +2,7 @@
 
 var IndexModel = require('../models/index');
 
+var MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
 
 module.exports = function (router) {
 
@@ -18,6 +19,7 @@ module.exports = function (router) {
     router.post('/upload', function (req, res) {
         var files = req.files;
         var hasFiles = false;
+        var totalFileSize = 0;
 
         for (var obj in files) {
             if (files.hasOwnProperty(obj)) {
@@ -27,13 +29,18 @@ module.exports = function (router) {
                 console.log('file.size:', file.size);
                 console.log('file.type:', file.type);
                 console.log('file.path:', file.path);
+                totalFileSize += file.size;
             }
         }
 
+        if (totalFileSize > MAX_FILE_SIZE) {
+            return res.status(413).json({});
+        }
+
         if (hasFiles) {
-            res.status(200).json({});
+            return res.status(200).json({});
         } else {
-            res.status(500).json({});
+            return res.status(500).json({});
         }
     });
 
