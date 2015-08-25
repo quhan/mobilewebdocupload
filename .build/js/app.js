@@ -115,7 +115,7 @@ $(document).ready(function () {
             if (result && result.status === 403) {
                 // To handle CSRF errors
                 return alert('Upload timed out: Please reload the page and try again.');
-            } else if (result && result.status === 500) {
+            } else {
                 // General error handler
                 return alert('An error has occured: Please try again later.');
             }
