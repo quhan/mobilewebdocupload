@@ -2,7 +2,7 @@
 /* global $:false, document:false, window:false, alert:false, FormData:false */
 
 var MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
-var SUPPORTED_IMG_MIME_TYPES = new RegExp('image\/(?=jpeg|pjpeg|gif|png)'); // JPG, GIF, PNG
+var SUPPORTED_IMG_MIME_TYPES = new RegExp('image\/(?=jpeg|pjpeg|png)'); // JPG, PNG
 var SUPPORTED_FILE_MIME_TYPES = new RegExp(SUPPORTED_IMG_MIME_TYPES.source + '|application\/pdf|pplication\/msword|application\/vnd.openxmlformats-officedocument.wordprocessingml.document'); // ... + PDF, DOC, DOCX
 var UPLOAD_URL = '/upload';
 

@@ -21,6 +21,7 @@
     "express": "^4.12.2",
     "kraken-js": "^1.0.3",
     "moment": "^2.10.6",
+    "pdfkit": "^0.7.1",
     "shortid": "^2.2.2"
   },
   "devDependencies": {

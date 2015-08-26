@@ -2,11 +2,13 @@
 
 var shortid = require('shortid');
 var moment = require('moment');
+var pdfkit = require('pdfkit');
+var fs = require('fs');
 
 var IndexModel = require('../models/index');
 
 var MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
-var SUPPORTED_IMG_MIME_TYPES = new RegExp('image\/(?=jpeg|pjpeg|gif|png)'); // JPG, GIF, PNG
+var SUPPORTED_IMG_MIME_TYPES = new RegExp('image\/(?=jpeg|pjpeg|png)'); // JPG, PNG
 var SUPPORTED_FILE_MIME_TYPES = new RegExp(SUPPORTED_IMG_MIME_TYPES.source + '|application\/pdf|pplication\/msword|application\/vnd.openxmlformats-officedocument.wordprocessingml.document'); // ... + PDF, DOC, DOCX
 
 function getFileExtension(fileName) {
@@ -77,6 +79,14 @@ module.exports = function (router) {
             // No files detected
             return res.status(500).json({});
         }
+
+        var doc = new pdfkit();
+        doc.pipe(fs.createWriteStream('sample.pdf'));
+        images.forEach(function (image) {
+            doc.image(image.path, 0, 0, {fit: [600, 750]});
+            doc.addPage();
+        });
+        doc.end();
 
         return res.status(200).json({});
     });
