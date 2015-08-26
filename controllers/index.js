@@ -47,7 +47,6 @@ module.exports = function (router) {
         for (var obj in files) {
             if (files.hasOwnProperty(obj)) {
                 var file = files[obj];
-                fileNumber += 1;
                 // console.log('file.name:', file.name);
                 // console.log('file.size:', file.size);
                 // console.log('file.type:', file.type);
@@ -70,8 +69,6 @@ module.exports = function (router) {
                 } else {
                     nonImages.push(file);
                 }
-
-                console.log(generateFileName(filePrefix, fileTimeStamp, fileUniqueId, fileNumber, getFileExtension(file.name)));
             }
         }
 
@@ -81,17 +78,30 @@ module.exports = function (router) {
         }
 
         // Generate a PDF out of image files
-        var doc = new pdfkit();
         var totalPages = images.length;
-        doc.pipe(fs.createWriteStream('sample.pdf'));
-        images.forEach(function (image) {
-            doc.image(image.path, 0, 0, {fit: [600, 750]});
-            totalPages -= 1;
-            if (totalPages > 0) {
-                doc.addPage();
-            }
+
+        if (totalPages > 0) {
+            fileNumber += 1;
+            var doc = new pdfkit();
+            var pdfFileName = generateFileName(filePrefix, fileTimeStamp, fileUniqueId, fileNumber, 'pdf');
+
+            doc.pipe(fs.createWriteStream(pdfFileName));
+            images.forEach(function (image) {
+                doc.image(image.path, 0, 0, {fit: [600, 750]});
+                totalPages -= 1;
+                if (totalPages > 0) {
+                    doc.addPage();
+                }
+            });
+            doc.end();
+        }
+
+        // Rename non-image files
+        nonImages.forEach(function (file) {
+            fileNumber += 1;
+            var fileName = generateFileName(filePrefix, fileTimeStamp, fileUniqueId, fileNumber, getFileExtension(file.name));
+            console.log(fileName);
         });
-        doc.end();
 
         return res.status(200).json({});
     });
