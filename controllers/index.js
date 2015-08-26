@@ -4,6 +4,12 @@ var shortid = require('shortid');
 var moment = require('moment');
 var pdfkit = require('pdfkit');
 var fs = require('fs');
+// var zlib = require('zlib');
+var aws = require('aws-sdk');
+
+var AWS_ACCESS_KEY = process.env.AWS_ACCESS_KEY;
+var AWS_SECRET_KEY = process.env.AWS_SECRET_KEY;
+var S3_BUCKET = process.env.S3_BUCKET;
 
 var IndexModel = require('../models/index');
 
@@ -47,23 +53,20 @@ module.exports = function (router) {
         for (var obj in files) {
             if (files.hasOwnProperty(obj)) {
                 var file = files[obj];
-                // console.log('file.name:', file.name);
-                // console.log('file.size:', file.size);
-                // console.log('file.type:', file.type);
-                // console.log('file.path:', file.path);
 
+                // Test if the total file sizes are above the limit
                 if (totalFileSize + file.size > MAX_FILE_SIZE) {
-                    // Total file sizes above the limit
                     return res.status(413).json({});
                 } else {
                     totalFileSize += file.size;
                 }
 
+                // Test if an invalid file is detected
                 if (!SUPPORTED_FILE_MIME_TYPES.test(file.type)) {
-                    // Invalid file detected
                     return res.status(422).json({});
                 }
 
+                // Split files into image and non-image types
                 if (SUPPORTED_IMG_MIME_TYPES.test(file.type)) {
                     images.push(file);
                 } else {
@@ -94,16 +97,30 @@ module.exports = function (router) {
                 }
             });
             doc.end();
+
+            // var body = fs.createReadStream(pdfFileName).pipe(zlib.createGzip());
+            var body = fs.createReadStream(pdfFileName);
+            aws.config.update({accessKeyId: AWS_ACCESS_KEY, secretAccessKey: AWS_SECRET_KEY});
+            var s3obj = new aws.S3({params: {Bucket: S3_BUCKET, Key: 'resume/' + pdfFileName}});
+            s3obj.upload({Body: body})
+                .on('httpUploadProgress', function (evt) { /*console.log(evt);*/ })
+                .send(function (err, data) {
+                    if (err) {
+                        console.err(err);
+                        return res.status(500).json({});
+                    }
+
+                    console.dir(data);
+                    return res.status(200).json({});
+                });
         }
 
         // Rename non-image files
-        nonImages.forEach(function (file) {
-            fileNumber += 1;
-            var fileName = generateFileName(filePrefix, fileTimeStamp, fileUniqueId, fileNumber, getFileExtension(file.name));
-            console.log(fileName);
-        });
-
-        return res.status(200).json({});
+        // nonImages.forEach(function (file) {
+        //     fileNumber += 1;
+        //     var fileName = generateFileName(filePrefix, fileTimeStamp, fileUniqueId, fileNumber, getFileExtension(file.name));
+        //     console.log(fileName);
+        // });
     });
 
 };
