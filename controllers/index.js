@@ -80,11 +80,16 @@ module.exports = function (router) {
             return res.status(500).json({});
         }
 
+        // Generate a PDF out of image files
         var doc = new pdfkit();
+        var totalPages = images.length;
         doc.pipe(fs.createWriteStream('sample.pdf'));
         images.forEach(function (image) {
             doc.image(image.path, 0, 0, {fit: [600, 750]});
-            doc.addPage();
+            totalPages -= 1;
+            if (totalPages > 0) {
+                doc.addPage();
+            }
         });
         doc.end();
 
