@@ -4,7 +4,7 @@ var shortid = require('shortid');
 var moment = require('moment');
 var pdfkit = require('pdfkit');
 var fs = require('fs');
-// var zlib = require('zlib');
+var archiver = require('archiver');
 var aws = require('aws-sdk');
 
 var AWS_ACCESS_KEY = process.env.AWS_ACCESS_KEY;
@@ -19,12 +19,8 @@ var MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
 var SUPPORTED_IMG_MIME_TYPES = new RegExp('image\/(?=jpeg|pjpeg|png)'); // JPG, PNG
 var SUPPORTED_FILE_MIME_TYPES = new RegExp(SUPPORTED_IMG_MIME_TYPES.source + '|application\/pdf|pplication\/msword|application\/vnd.openxmlformats-officedocument.wordprocessingml.document'); // ... + PDF, DOC, DOCX
 
-function getFileExtension(fileName) {
-    return fileName.substr(fileName.lastIndexOf('.') + 1);
-}
-
-function generateFileName(prefix, timeStamp, uniqueId, fileNumber, extension) {
-    return prefix + '_' + timeStamp + '_' + uniqueId + '_' + fileNumber + '.' + extension;
+function generateFileName(prefix, timeStamp, uniqueId) {
+    return prefix + '_' + timeStamp + '_' + uniqueId + '.zip';
 }
 
 module.exports = function (router) {
@@ -42,15 +38,13 @@ module.exports = function (router) {
     router.post('/upload', function (req, res) {
         var files = req.files;
         var totalFileSize = 0;
-        var fileNumber = 0;
-
-        var images = [];
-        var nonImages = [];
+        var documents = [];
 
         // Set the file prefix based on Application Type
         var filePrefix = (req.body && req.body.type === 'intern') ? 'INT' : 'DEV';
         var fileTimeStamp = moment().format('YYMMDD');
         var fileUniqueId = shortid.generate();
+        var zipFileName = generateFileName(filePrefix, fileTimeStamp, fileUniqueId);
 
         for (var obj in files) {
             if (files.hasOwnProperty(obj)) {
@@ -68,12 +62,7 @@ module.exports = function (router) {
                     return res.status(422).json({});
                 }
 
-                // Split files into image and non-image types
-                if (SUPPORTED_IMG_MIME_TYPES.test(file.type)) {
-                    images.push(file);
-                } else {
-                    nonImages.push(file);
-                }
+                documents.push(file);
             }
         }
 
@@ -82,47 +71,27 @@ module.exports = function (router) {
             return res.status(500).json({});
         }
 
-        // Generate a PDF out of image files
-        var totalPages = images.length;
+        var zip = archiver('zip');
 
-        if (totalPages > 0) {
-            fileNumber += 1;
-            var doc = new pdfkit();
-            var pdfFileName = generateFileName(filePrefix, fileTimeStamp, fileUniqueId, fileNumber, 'pdf');
+        documents.forEach(function (doc) {
+            zip.append(fs.createReadStream(doc.path), {name: doc.name});
+        });
 
-            doc.pipe(fs.createWriteStream(pdfFileName));
-            images.forEach(function (image) {
-                doc.image(image.path, 0, 0, {fit: [600, 750]});
-                totalPages -= 1;
-                if (totalPages > 0) {
-                    doc.addPage();
+        zip.finalize();
+
+        aws.config.update({accessKeyId: AWS_ACCESS_KEY, secretAccessKey: AWS_SECRET_KEY});
+        var s3obj = new aws.S3({params: {Bucket: S3_BUCKET, Key: UPLOAD_PATH + zipFileName}});
+        s3obj.upload({Body: zip})
+            .on('httpUploadProgress', function (evt) { /*console.log(evt);*/ })
+            .send(function (err, data) {
+                if (err) {
+                    console.err(err);
+                    return res.status(500).json({});
                 }
+
+                console.dir(data);
+                return res.status(200).json({});
             });
-            doc.end();
-
-            // var body = fs.createReadStream(pdfFileName).pipe(zlib.createGzip());
-            var body = fs.createReadStream(pdfFileName);
-            aws.config.update({accessKeyId: AWS_ACCESS_KEY, secretAccessKey: AWS_SECRET_KEY});
-            var s3obj = new aws.S3({params: {Bucket: S3_BUCKET, Key: UPLOAD_PATH + pdfFileName}});
-            s3obj.upload({Body: body})
-                .on('httpUploadProgress', function (evt) { /*console.log(evt);*/ })
-                .send(function (err, data) {
-                    if (err) {
-                        console.err(err);
-                        return res.status(500).json({});
-                    }
-
-                    console.dir(data);
-                    return res.status(200).json({});
-                });
-        }
-
-        // Rename non-image files
-        // nonImages.forEach(function (file) {
-        //     fileNumber += 1;
-        //     var fileName = generateFileName(filePrefix, fileTimeStamp, fileUniqueId, fileNumber, getFileExtension(file.name));
-        //     console.log(fileName);
-        // });
     });
 
 };
