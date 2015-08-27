@@ -2,7 +2,6 @@
 
 var shortid = require('shortid');
 var moment = require('moment');
-var pdfkit = require('pdfkit');
 var fs = require('fs');
 var archiver = require('archiver');
 var aws = require('aws-sdk');
@@ -12,8 +11,6 @@ var AWS_SECRET_KEY = process.env.AWS_SECRET_KEY;
 var S3_BUCKET = process.env.S3_BUCKET;
 
 var UPLOAD_PATH = 'resume/';
-
-var IndexModel = require('../models/index');
 
 var MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
 var SUPPORTED_IMG_MIME_TYPES = new RegExp('image\/(?=jpeg|pjpeg|png)'); // JPG, PNG
@@ -25,14 +22,8 @@ function generateFileName(prefix, timeStamp, uniqueId) {
 
 module.exports = function (router) {
 
-    var model = new IndexModel();
-
     router.get('/', function (req, res) {
-
-
-        res.render('index', model);
-
-
+        res.render('index', {});
     });
 
     router.post('/upload', function (req, res) {
