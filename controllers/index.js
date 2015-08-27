@@ -11,6 +11,8 @@ var AWS_ACCESS_KEY = process.env.AWS_ACCESS_KEY;
 var AWS_SECRET_KEY = process.env.AWS_SECRET_KEY;
 var S3_BUCKET = process.env.S3_BUCKET;
 
+var UPLOAD_PATH = 'resume/';
+
 var IndexModel = require('../models/index');
 
 var MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
@@ -101,7 +103,7 @@ module.exports = function (router) {
             // var body = fs.createReadStream(pdfFileName).pipe(zlib.createGzip());
             var body = fs.createReadStream(pdfFileName);
             aws.config.update({accessKeyId: AWS_ACCESS_KEY, secretAccessKey: AWS_SECRET_KEY});
-            var s3obj = new aws.S3({params: {Bucket: S3_BUCKET, Key: 'resume/' + pdfFileName}});
+            var s3obj = new aws.S3({params: {Bucket: S3_BUCKET, Key: UPLOAD_PATH + pdfFileName}});
             s3obj.upload({Body: body})
                 .on('httpUploadProgress', function (evt) { /*console.log(evt);*/ })
                 .send(function (err, data) {
