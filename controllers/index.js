@@ -16,8 +16,18 @@ var MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
 var SUPPORTED_IMG_MIME_TYPES = new RegExp('image\/(?=jpeg|pjpeg|png)'); // JPG, PNG
 var SUPPORTED_FILE_MIME_TYPES = new RegExp(SUPPORTED_IMG_MIME_TYPES.source + '|application\/pdf|pplication\/msword|application\/vnd.openxmlformats-officedocument.wordprocessingml.document'); // ... + PDF, DOC, DOCX
 
-function generateFileName(prefix, timeStamp, uniqueId) {
-    return prefix + '_' + timeStamp + '_' + uniqueId + '.zip';
+function generateFileName(prefix, timeStamp, uniqueId, version, extension) {
+    var fileName = '';
+    fileName += prefix + '_' + timeStamp + '_' + uniqueId;
+    if (version) {
+        fileName += '_' + version;
+    }
+    fileName += '.' + extension;
+    return fileName;
+}
+
+function getFileExtension(fileName) {
+    return fileName.substr(fileName.lastIndexOf('.') + 1);
 }
 
 module.exports = function (router) {
@@ -31,12 +41,7 @@ module.exports = function (router) {
         var totalFileSize = 0;
         var documents = [];
 
-        // Set the file prefix based on Application Type
-        var filePrefix = (req.body && req.body.type === 'intern') ? 'INT' : 'DEV';
-        var fileTimeStamp = moment().format('YYMMDD');
-        var fileUniqueId = shortid.generate();
-        var zipFileName = generateFileName(filePrefix, fileTimeStamp, fileUniqueId);
-
+        // STEP 1: Test files for issues
         for (var obj in files) {
             if (files.hasOwnProperty(obj)) {
                 var file = files[obj];
@@ -62,14 +67,21 @@ module.exports = function (router) {
             return res.status(500).json({});
         }
 
+        // STEP 2: Create a zip of the files
+        var filePrefix = (req.body && req.body.type === 'intern') ? 'INT' : 'DEV';
+        var fileTimeStamp = moment().format('YYMMDD');
+        var fileUniqueId = shortid.generate();
+        var zipFileName = generateFileName(filePrefix, fileTimeStamp, fileUniqueId, null, 'zip');
         var zip = archiver('zip');
 
-        documents.forEach(function (doc) {
-            zip.append(fs.createReadStream(doc.path), {name: doc.name});
+        documents.forEach(function (file, index) {
+            var fileRename = generateFileName(filePrefix, fileTimeStamp, fileUniqueId, (index + 1), getFileExtension(file.name));
+            zip.append(fs.createReadStream(file.path), {name: fileRename});
         });
 
         zip.finalize();
 
+        // STEP 3: Upload files to S3
         aws.config.update({accessKeyId: AWS_ACCESS_KEY, secretAccessKey: AWS_SECRET_KEY});
         var s3obj = new aws.S3({params: {Bucket: S3_BUCKET, Key: UPLOAD_PATH + zipFileName}});
         s3obj.upload({Body: zip})
