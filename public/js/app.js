@@ -24,6 +24,9 @@ $(document).ready(function () {
         $cameraBtn = $uploadControls.find('#camera'),
         $submitBtn = $uploadControls.find('#submit');
 
+    var $progressBar = $('#progress'),
+        $progressCounter = $progressBar.find('span');
+
     // Attach listeners to Application Type buttons
     $('.js-application-type').click(function () {
         var applicationType = $(this).data('applicationtype');
@@ -85,6 +88,8 @@ $(document).ready(function () {
             console.log(files[i].file);
         }
 
+        showProgressBar();
+
         $.ajax({
 
             url: UPLOAD_URL,
@@ -98,8 +103,7 @@ $(document).ready(function () {
                     if (event.lengthComputable) {
                         var percentComplete = (event.loaded / event.total) * 0.5,
                             progress = Math.round(percentComplete * 100) + '%';
-                        // $progressCounter.text(progress);
-                        // $progressMeter.css({'width': progress});
+                        $progressCounter.width(progress).text(progress);
                     }
                 }, false);
                 return xhr;
@@ -107,9 +111,25 @@ $(document).ready(function () {
 
         }).done(function (result) {
 
-            goToSummaryPage();
+            // Complete the progress display
+            var percentComplete = 0.5;
+
+            function progressToCompletion() {
+                if (percentComplete < 1) {
+                    percentComplete += 0.05;
+                    var progress = Math.round(percentComplete * 100) + '%';
+                    $progressCounter.width(progress).text(progress);
+                } else {
+                    clearInterval(progressCompletion);
+                    goToSummaryPage();
+                }
+            }
+
+            var progressCompletion = setInterval(progressToCompletion, 25);
 
         }).fail(function (result) {
+
+            hideProgressBar();
 
             console.dir(result);
             if (result && result.status === 403) {
@@ -168,6 +188,20 @@ $(document).ready(function () {
     function hideUploadControls() {
         $cameraHeroBtn.removeClass('hide');
         $uploadControls.addClass('hide');
+    }
+
+    function showProgressBar() {
+        $cameraHeroBtn.addClass('hide');
+        $uploadControls.addClass('hide');
+        $progressBar.removeClass('hide');
+        $progressCounter.width('0%').text('0%');
+    }
+
+    function hideProgressBar() {
+        $cameraHeroBtn.addClass('hide');
+        $uploadControls.removeClass('hide');
+        $progressBar.addClass('hide');
+        $progressCounter.width('0%').text('0%');
     }
 
     function goToUploadPage(applicationType) {
