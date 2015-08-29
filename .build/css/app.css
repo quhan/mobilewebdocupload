@@ -1,10 +1,28 @@
+/* line 1, css/app */
 .hide {
   display: none;
 }
+/* line 5, css/app */
+html,
+body {
+  padding: 0;
+  margin: 0;
+}
+/* line 9, css/app */
+html {
+  min-height: 100%;
+  background: #cfecf9;
+  background-image: url(../img/background.jpg), linear-gradient(to bottom, #009cde 0%, #cfecf9 100%);
+  background-repeat: no-repeat;
+  background-size: 100%, auto;
+  background-position: center bottom, center;
+}
+/* line 18, css/app */
 body {
   font-family: sans-serif;
   color: #003087;
 }
+/* line 25, css/app */
 .ui-page {
   /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#009cde+0,cfecf9+100 */
   background: #009cde;
@@ -24,44 +42,53 @@ body {
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#009cde', endColorstr='#cfecf9', GradientType=0);
   /* IE6-9 */
 }
+/* line 37, css/app */
 h1,
 .ui-header {
   margin-bottom: 20px;
   color: #fff;
 }
+/* line 42, css/app */
 h2 {
   background-color: rgba(255, 255, 255, 0.62);
   font-size: 25px;
   color: #808080;
 }
+/* line 48, css/app */
 p {
   text-align: center;
 }
+/* line 52, css/app */
 .ui-btn {
   border: 0;
   border-radius: 5px;
   background-color: #fff;
 }
+/* line 58, css/app */
 button.ui-btn,
 .ui-controlgroup-controls button.ui-btn-icon-notext {
   margin: 20px auto;
   width: 285px;
   height: 60px;
 }
+/* line 64, css/app */
 .thumbnail {
   position: relative;
   width: 50%;
   margin: 20px auto 30px;
 }
+/* line 69, css/app */
 .thumbnail .remove-file {
   position: absolute;
   top: -20px;
   right: -30px;
 }
+/* line 75, css/app */
 .thumbnail img {
   width: 100%;
   border: 10px solid #ddd;
 }
+/* line 81, css/app */
 .progress-bar {
   width: 100%;
   height: 25px;
@@ -69,6 +96,7 @@ button.ui-btn,
   background-color: #fff;
   box-shadow: 0 2px 3px rgba(0, 0, 0, 0.25) inset;
 }
+/* line 89, css/app */
 .progress-bar > span {
   display: block;
   height: 25px;

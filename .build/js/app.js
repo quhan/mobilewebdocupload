@@ -11,7 +11,10 @@ var totalFileSize = 0;
 
 $(document).ready(function () {
 
-    var $pageContainer = $(':mobile-pagecontainer');
+    // var $pageContainer = $(':mobile-pagecontainer');
+    var $introPage = $('#intro'),
+        $uploadPage = $('#upload'),
+        $summaryPage = $('#summary');
 
     var $uploadForm = $('#uploadform'),
         $applicationType = $uploadForm.find('#applicationtype'),
@@ -147,7 +150,8 @@ $(document).ready(function () {
         var $thumbnail = $('<div class="thumbnail" id="' + uuid + '"><a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext remove-file">Remove</a><img src="' + url + '" /></div>');
         $thumbnail.appendTo($thumbnails).hide().fadeIn(250);
 
-        $thumbnail.find('.remove-file').click(function () {
+        $thumbnail.find('.remove-file').click(function (event) {
+            event.preventDefault();
             removeThumbnail($thumbnail, uuid);
         });
     }
@@ -206,11 +210,17 @@ $(document).ready(function () {
 
     function goToUploadPage(applicationType) {
         $applicationType.val(applicationType);
-        $pageContainer.pagecontainer('change', '#upload', {changeHash: false, transition: 'slide'});
+        // $pageContainer.pagecontainer('change', '#upload', {changeHash: false, transition: 'slide'});
+        $introPage.addClass('hide');
+        $uploadPage.removeClass('hide');
+        $summaryPage.addClass('hide');
     }
 
     function goToSummaryPage() {
-        $pageContainer.pagecontainer('change', '#summary', {changeHash: false, transition: 'slide'});
+        // $pageContainer.pagecontainer('change', '#summary', {changeHash: false, transition: 'slide'});
+        $introPage.addClass('hide');
+        $uploadPage.addClass('hide');
+        $summaryPage.removeClass('hide');
     }
 
     function guid() {

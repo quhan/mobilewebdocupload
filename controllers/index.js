@@ -83,14 +83,14 @@ function uploadToS3(zip, filePrefix, next) {
 
     var s3obj = new aws.S3({params: {Bucket: S3_BUCKET, Key: UPLOAD_PATH + uploadFileName}});
     s3obj.upload({Body: zip})
-        .on('httpUploadProgress', function (evt) { console.log(evt); })
+        // .on('httpUploadProgress', function (evt) { console.log(evt); })
         .send(function (err, result) {
             if (err) {
-                console.err(err);
+                console.dir(err);
                 return next({status: 500, error: err}, null);
             }
 
-            console.dir(result);
+            // console.dir(result);
             return next(null, result);
         });
 

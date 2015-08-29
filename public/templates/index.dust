@@ -12,7 +12,7 @@
     </div>
 </div>
 
-<div data-role="page" id="upload">
+<div data-role="page" id="upload" class="hide">
     {>"layouts/header" /}
     <div role="main" class="ui-content">
         <h2>Upload your resume</h2>
@@ -41,7 +41,7 @@
     </div>
 </div>
 
-<div data-role="page" id="summary">
+<div data-role="page" id="summary" class="hide">
     {>"layouts/header" /}
     <div role="main" class="ui-content">
         <p>Your resume has been successfully uploaded!</p>
