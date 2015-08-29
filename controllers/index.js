@@ -10,24 +10,90 @@ var AWS_ACCESS_KEY = process.env.AWS_ACCESS_KEY;
 var AWS_SECRET_KEY = process.env.AWS_SECRET_KEY;
 var S3_BUCKET = process.env.S3_BUCKET;
 
+aws.config.update({accessKeyId: AWS_ACCESS_KEY, secretAccessKey: AWS_SECRET_KEY});
 var UPLOAD_PATH = 'resume/';
 
 var MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
 var SUPPORTED_IMG_MIME_TYPES = new RegExp('image\/(?=jpeg|pjpeg|png)'); // JPG, PNG
 var SUPPORTED_FILE_MIME_TYPES = new RegExp(SUPPORTED_IMG_MIME_TYPES.source + '|application\/pdf|pplication\/msword|application\/vnd.openxmlformats-officedocument.wordprocessingml.document'); // ... + PDF, DOC, DOCX
 
-function generateFileName(prefix, timeStamp, uniqueId, version, extension) {
-    var fileName = '';
-    fileName += prefix + '_' + timeStamp + '_' + uniqueId;
-    if (version) {
-        fileName += '_' + version;
-    }
-    fileName += '.' + extension;
-    return fileName;
+function generateFilePrefix(applicationType) {
+    var fileTimestamp = moment().format('YYMMDD');
+    var fileUniqueId = shortid.generate();
+
+    return applicationType + '_' + fileTimestamp + '_' + fileUniqueId;
 }
 
 function getFileExtension(fileName) {
     return fileName.substr(fileName.lastIndexOf('.') + 1);
+}
+
+function generateFileName(prefix, version, extension) {
+    return prefix + (version ? '_' + version : '') + '.' + extension;
+}
+
+function validateFiles(rawFiles, next) {
+    var files = [];
+    var totalPayloadSize = 0;
+
+    for (var obj in rawFiles) {
+        if (rawFiles.hasOwnProperty(obj)) {
+            var file = rawFiles[obj];
+
+            // Test if the total payload size is above the limit
+            if (totalPayloadSize + file.size > MAX_FILE_SIZE) {
+                return next({status: 413}, null);
+            } else {
+                totalPayloadSize += file.size;
+            }
+
+            // Test if an invalid file is detected
+            if (!SUPPORTED_FILE_MIME_TYPES.test(file.type)) {
+                return next({status: 422}, null);
+            }
+
+            files.push(file);
+        }
+    }
+
+    if (!files.length) {
+        return next({status: 500}, null);
+    } else {
+        return next(null, files);
+    }
+}
+
+function zipFiles(files, filePrefix, next) {
+    var zip = archiver('zip');
+
+    files.forEach(function (file, index) {
+        var newFileName = generateFileName(filePrefix, (index + 1), getFileExtension(file.name));
+        zip.append(fs.createReadStream(file.path), {name: newFileName});
+    });
+
+    // TODO: Handle errors?
+
+    zip.finalize();
+
+    return next(null, zip);
+}
+
+function uploadToS3(zip, filePrefix, next) {
+    var uploadFileName = generateFileName(filePrefix, null, 'zip');
+
+    var s3obj = new aws.S3({params: {Bucket: S3_BUCKET, Key: UPLOAD_PATH + uploadFileName}});
+    s3obj.upload({Body: zip})
+        .on('httpUploadProgress', function (evt) { console.log(evt); })
+        .send(function (err, result) {
+            if (err) {
+                console.err(err);
+                return next({status: 500, error: err}, null);
+            }
+
+            console.dir(result);
+            return next(null, result);
+        });
+
 }
 
 module.exports = function (router) {
@@ -37,64 +103,28 @@ module.exports = function (router) {
     });
 
     router.post('/upload', function (req, res) {
-        var files = req.files;
-        var totalFileSize = 0;
-        var documents = [];
+        var applicationType = (req.body && req.body.type === 'intern') ? 'INT' : 'DEV';
+        var filePrefix = generateFilePrefix(applicationType);
 
-        // STEP 1: Test files for issues
-        for (var obj in files) {
-            if (files.hasOwnProperty(obj)) {
-                var file = files[obj];
-
-                // Test if the total file sizes are above the limit
-                if (totalFileSize + file.size > MAX_FILE_SIZE) {
-                    return res.status(413).json({});
-                } else {
-                    totalFileSize += file.size;
-                }
-
-                // Test if an invalid file is detected
-                if (!SUPPORTED_FILE_MIME_TYPES.test(file.type)) {
-                    return res.status(422).json({});
-                }
-
-                documents.push(file);
+        validateFiles(req.files, function (err, files) {
+            if (err) {
+                // TODO: Log error
+                return res.status(err.status).json({});
             }
-        }
-
-        if (totalFileSize === 0) {
-            // No files detected
-            return res.status(500).json({});
-        }
-
-        // STEP 2: Create a zip of the files
-        var filePrefix = (req.body && req.body.type === 'intern') ? 'INT' : 'DEV';
-        var fileTimeStamp = moment().format('YYMMDD');
-        var fileUniqueId = shortid.generate();
-        var zipFileName = generateFileName(filePrefix, fileTimeStamp, fileUniqueId, null, 'zip');
-        var zip = archiver('zip');
-
-        documents.forEach(function (file, index) {
-            var fileRename = generateFileName(filePrefix, fileTimeStamp, fileUniqueId, (index + 1), getFileExtension(file.name));
-            zip.append(fs.createReadStream(file.path), {name: fileRename});
-        });
-
-        zip.finalize();
-
-        // STEP 3: Upload files to S3
-        aws.config.update({accessKeyId: AWS_ACCESS_KEY, secretAccessKey: AWS_SECRET_KEY});
-        var s3obj = new aws.S3({params: {Bucket: S3_BUCKET, Key: UPLOAD_PATH + zipFileName}});
-        s3obj.upload({Body: zip})
-            .on('httpUploadProgress', function (evt) { /*console.log(evt);*/ })
-            .send(function (err, data) {
+            zipFiles(files, filePrefix, function (err, zip) {
                 if (err) {
-                    console.err(err);
-                    return res.status(500).json({});
+                    // TODO: Log error
+                    return res.status(err.status).json({});
                 }
-
-                console.dir(data);
-                return res.status(200).json({});
+                uploadToS3(zip, filePrefix, function (err, result) {
+                    if (err) {
+                        // TODO: Log error
+                        return res.status(err.status).json({});
+                    }
+                    return res.status(200).json({});
+                });
             });
+        });
     });
 
 };
