@@ -22,15 +22,15 @@
             <input type="file" id="file" name="file" class="hide" accept="image/jpeg,image/pjpeg,image/png,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" />
         </form>
 
-        <button class="" id="camerahero">Camera</button>
+        <button id="camerahero">Camera</button>
 
         <fieldset class="hide" id="uploadcontrols">
             <div class="" id="thumbnails"></div>
             <div class="">
-                <button class="" id="camera">Camera</button>
+                <button id="camera">Camera</button>
             </div>
             <div class="">
-                <button class="" id="submit">Submit</button>
+                <button id="submit">Submit</button>
             </div>
         </fieldset>
 
