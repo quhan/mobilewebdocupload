@@ -18,6 +18,7 @@ html {
 body {
     font-family: sans-serif;
     font-size: 16px;
+    // letter-spacing: 1px;
     color: rgb(0, 48, 135);
 }
 
@@ -29,6 +30,10 @@ body {
     // height: 100vh;
     min-width: 320px;
     max-width: 1024px;
+}
+
+#intro .content, #summary .content {
+    margin-top: 50px;
 }
 
 header {
@@ -64,6 +69,7 @@ button {
     border: 0;
     border-radius: 5px;
     background-color: #fff;
+    // letter-spacing: 1px;
 }
 
 button.js-application-type {
@@ -77,12 +83,12 @@ button.js-application-type {
 
 button.developer {
     background: #fff url(../img/developer.png) no-repeat 10px center;
-    background-size: 55px;
+    background-size: 50px;
 }
 
 button.intern {
     background: #fff url(../img/intern.png) no-repeat 10px center;
-    background-size: 55px;
+    background-size: 50px;
 }
 
 #camerahero {
@@ -121,14 +127,25 @@ button.intern {
     margin: 20px auto 30px;
 
     .remove-file {
+        display: block;
         position: absolute;
-        top: -20px;
-        right: -30px;
+        top: -10px;
+        right: -20px;
+        width: 25px;
+        height: 25px;
+        border-radius: 25px;
+        background: #bbb;
+        color: #fff;
+        font-family: Arial, sans-serif;
+        font-weight: 600;
+        text-align: center;
+        text-decoration: none;
+        line-height: 25px;
     }
 
     img {
         width: 100%;
-        border: 10px solid #ddd;
+        border: 5px solid #bbb;
     }
 }
 

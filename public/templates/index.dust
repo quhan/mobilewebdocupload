@@ -4,7 +4,7 @@
 
 <div id="intro" class="page">
     {>"layouts/header" /}
-    <div>
+    <div class="content">
         <p>Yes! I would like to apply as a/an</p>
         <button class="js-application-type developer" data-applicationtype="developer">Code Ninja</button>
         <button class="js-application-type intern" data-applicationtype="intern">Intern</button>
@@ -14,7 +14,7 @@
 
 <div id="upload" class="page hide">
     {>"layouts/header" /}
-    <div>
+    <div class="content">
         <h2>Upload your resume</h2>
         <form id="uploadform" name="uploadform" enctype="multipart/form-data">
             <input type="hidden" id="_csrf" name="_csrf" value="{_csrf}" />
@@ -43,10 +43,10 @@
 
 <div id="summary" class="page hide">
     {>"layouts/header" /}
-    <div>
+    <div class="content">
         <p>Your resume has been successfully uploaded!</p>
         <p>We will review your application and contact you if there's a match.</p>
-        <p>Thank you!</p>
+        <p><strong>Thank you!</strong></p>
     </div>
 </div>
 

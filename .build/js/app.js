@@ -142,7 +142,7 @@ $(document).ready(function () {
     });
 
     function addThumbnail(uuid, url) {
-        var $thumbnail = $('<div class="thumbnail" id="' + uuid + '"><a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext remove-file">Remove</a><img src="' + url + '" /></div>');
+        var $thumbnail = $('<div class="thumbnail" id="' + uuid + '"><a href="#" class="remove-file">X</a><img src="' + url + '" /></div>');
         $thumbnail.appendTo($thumbnails).hide().fadeIn(250);
 
         $thumbnail.find('.remove-file').click(function (event) {
