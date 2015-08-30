@@ -11,7 +11,9 @@ var totalFileSize = 0;
 
 $(document).ready(function () {
 
-    var $pageContainer = $(':mobile-pagecontainer');
+    var $introPage = $('#intro'),
+        $uploadPage = $('#upload'),
+        $summaryPage = $('#summary');
 
     var $uploadForm = $('#uploadform'),
         $applicationType = $uploadForm.find('#applicationtype'),
@@ -30,10 +32,7 @@ $(document).ready(function () {
     // Attach listeners to Application Type buttons
     $('.js-application-type').click(function () {
         var applicationType = $(this).data('applicationtype');
-
-        if (applicationType) {
-            goToUploadPage(applicationType);
-        }
+        goToUploadPage(applicationType);
     });
 
     $cameraHeroBtn.click(function () {
@@ -65,15 +64,14 @@ $(document).ready(function () {
         var uuid = guid();
         files.push({id: uuid, file: file});
         updateTotalFileSize();
-        // formData.append('files', file);
 
         if (SUPPORTED_IMG_MIME_TYPES.test(file.type)) {
             // Generate thumbnail
             var thumbnailURL = window.URL.createObjectURL(file);
             addThumbnail(uuid, thumbnailURL);
         } else {
-            // TODO: Show generic file
-            addThumbnail(uuid, 'http://41.media.tumblr.com/16827d6a4b41ebb817c5a4a5d46baffc/tumblr_inline_nr4g6f4glB1rhj1f1_1280.png');
+            // Show generic file thumbnail
+            addThumbnail(uuid, '../img/doc.png');
         }
 
         showUploadControls();
@@ -101,7 +99,7 @@ $(document).ready(function () {
                 var xhr = new window.XMLHttpRequest();
                 xhr.upload.addEventListener('progress', function (event) {
                     if (event.lengthComputable) {
-                        var percentComplete = (event.loaded / event.total) * 0.5,
+                        var percentComplete = (event.loaded / event.total) * 0.6,
                             progress = Math.round(percentComplete * 100) + '%';
                         $progressCounter.width(progress).text(progress);
                     }
@@ -112,7 +110,7 @@ $(document).ready(function () {
         }).done(function (result) {
 
             // Complete the progress display
-            var percentComplete = 0.5;
+            var percentComplete = 0.6;
 
             function progressToCompletion() {
                 if (percentComplete < 1) {
@@ -144,10 +142,11 @@ $(document).ready(function () {
     });
 
     function addThumbnail(uuid, url) {
-        var $thumbnail = $('<div class="thumbnail" id="' + uuid + '"><a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext remove-file">Remove</a><img src="' + url + '" /></div>');
+        var $thumbnail = $('<div class="thumbnail" id="' + uuid + '"><a href="#" class="remove-file">X</a><img src="' + url + '" /></div>');
         $thumbnail.appendTo($thumbnails).hide().fadeIn(250);
 
-        $thumbnail.find('.remove-file').click(function () {
+        $thumbnail.find('.remove-file').click(function (event) {
+            event.preventDefault();
             removeThumbnail($thumbnail, uuid);
         });
     }
@@ -206,11 +205,15 @@ $(document).ready(function () {
 
     function goToUploadPage(applicationType) {
         $applicationType.val(applicationType);
-        $pageContainer.pagecontainer('change', '#upload', {changeHash: false, transition: 'slide'});
+        $introPage.addClass('hide');
+        $uploadPage.removeClass('hide').addClass('slideLeft');
+        $summaryPage.addClass('hide');
     }
 
     function goToSummaryPage() {
-        $pageContainer.pagecontainer('change', '#summary', {changeHash: false, transition: 'slide'});
+        $introPage.addClass('hide');
+        $uploadPage.addClass('hide');
+        $summaryPage.removeClass('hide').addClass('slideLeft');
     }
 
     function guid() {
