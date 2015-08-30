@@ -206,14 +206,14 @@ $(document).ready(function () {
     function goToUploadPage(applicationType) {
         $applicationType.val(applicationType);
         $introPage.addClass('hide');
-        $uploadPage.removeClass('hide');
+        $uploadPage.removeClass('hide').addClass('slideLeft');
         $summaryPage.addClass('hide');
     }
 
     function goToSummaryPage() {
         $introPage.addClass('hide');
         $uploadPage.addClass('hide');
-        $summaryPage.removeClass('hide');
+        $summaryPage.removeClass('hide').addClass('slideLeft');
     }
 
     function guid() {
