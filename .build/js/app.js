@@ -70,8 +70,8 @@ $(document).ready(function () {
             var thumbnailURL = window.URL.createObjectURL(file);
             addThumbnail(uuid, thumbnailURL);
         } else {
-            // TODO: Show generic file
-            addThumbnail(uuid, 'http://41.media.tumblr.com/16827d6a4b41ebb817c5a4a5d46baffc/tumblr_inline_nr4g6f4glB1rhj1f1_1280.png');
+            // Show generic file thumbnail
+            addThumbnail(uuid, '../img/doc.png');
         }
 
         showUploadControls();
