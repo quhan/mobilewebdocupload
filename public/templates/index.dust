@@ -24,15 +24,11 @@
 
         <button id="camerahero">Camera</button>
 
-        <fieldset class="hide" id="uploadcontrols">
+        <div class="hide" id="uploadcontrols">
             <div class="" id="thumbnails"></div>
-            <div class="">
-                <button id="camera">Camera</button>
-            </div>
-            <div class="">
-                <button id="submit">Submit</button>
-            </div>
-        </fieldset>
+            <button id="camera">Camera</button>
+            <button id="submit">Submit</button>
+        </div>
 
         <div id="progress" class="progress-bar hide">
             <span style="width: 80%;">80%</span>
