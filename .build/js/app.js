@@ -83,7 +83,6 @@ $(document).ready(function () {
         formData.append('type', $applicationType.val());
         for (var i = 0; i < files.length; i++) {
             formData.append('files' + i, files[i].file);
-            console.log(files[i].file);
         }
 
         showProgressBar();
