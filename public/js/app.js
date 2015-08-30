@@ -99,7 +99,7 @@ $(document).ready(function () {
                 var xhr = new window.XMLHttpRequest();
                 xhr.upload.addEventListener('progress', function (event) {
                     if (event.lengthComputable) {
-                        var percentComplete = (event.loaded / event.total) * 0.5,
+                        var percentComplete = (event.loaded / event.total) * 0.6,
                             progress = Math.round(percentComplete * 100) + '%';
                         $progressCounter.width(progress).text(progress);
                     }
@@ -110,7 +110,7 @@ $(document).ready(function () {
         }).done(function (result) {
 
             // Complete the progress display
-            var percentComplete = 0.5;
+            var percentComplete = 0.6;
 
             function progressToCompletion() {
                 if (percentComplete < 1) {
