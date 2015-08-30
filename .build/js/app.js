@@ -11,7 +11,6 @@ var totalFileSize = 0;
 
 $(document).ready(function () {
 
-    // var $pageContainer = $(':mobile-pagecontainer');
     var $introPage = $('#intro'),
         $uploadPage = $('#upload'),
         $summaryPage = $('#summary');
@@ -33,10 +32,7 @@ $(document).ready(function () {
     // Attach listeners to Application Type buttons
     $('.js-application-type').click(function () {
         var applicationType = $(this).data('applicationtype');
-
-        if (applicationType) {
-            goToUploadPage(applicationType);
-        }
+        goToUploadPage(applicationType);
     });
 
     $cameraHeroBtn.click(function () {
@@ -68,7 +64,6 @@ $(document).ready(function () {
         var uuid = guid();
         files.push({id: uuid, file: file});
         updateTotalFileSize();
-        // formData.append('files', file);
 
         if (SUPPORTED_IMG_MIME_TYPES.test(file.type)) {
             // Generate thumbnail
@@ -210,14 +205,12 @@ $(document).ready(function () {
 
     function goToUploadPage(applicationType) {
         $applicationType.val(applicationType);
-        // $pageContainer.pagecontainer('change', '#upload', {changeHash: false, transition: 'slide'});
         $introPage.addClass('hide');
         $uploadPage.removeClass('hide');
         $summaryPage.addClass('hide');
     }
 
     function goToSummaryPage() {
-        // $pageContainer.pagecontainer('change', '#summary', {changeHash: false, transition: 'slide'});
         $introPage.addClass('hide');
         $uploadPage.addClass('hide');
         $summaryPage.removeClass('hide');

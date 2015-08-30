@@ -6,8 +6,8 @@
     {>"layouts/header" /}
     <div>
         <p>Yes! I would like to apply as a/an</p>
-        <button class="js-application-type" data-applicationtype="developer">Code Ninja</button>
-        <button class="js-application-type" data-applicationtype="intern">Intern</button>
+        <button class="js-application-type developer" data-applicationtype="developer">Code Ninja</button>
+        <button class="js-application-type intern" data-applicationtype="intern">Intern</button>
         <p><small>Click to proceed</small></p>
     </div>
 </div>
