@@ -23,7 +23,7 @@ body {
   margin: 0 auto;
   padding: 0;
   min-width: 320px;
-  max-width: 1024px;
+  max-width: 768px;
 }
 .slideLeft {
   animation-name: slideLeft;
