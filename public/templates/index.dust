@@ -2,8 +2,10 @@
 
 {<body}
 
+<header>
+    <h1>Singapore Development Centre</h1>
+</header>
 <div id="intro" class="page">
-    {>"layouts/header" /}
     <div class="content">
         <p>Yes! I would like to apply as a/an</p>
         <button class="js-application-type developer" data-applicationtype="developer">Code Ninja</button>
@@ -13,7 +15,6 @@
 </div>
 
 <div id="upload" class="page hide">
-    {>"layouts/header" /}
     <div class="content">
         <h2>Upload your resume</h2>
         <form id="uploadform" name="uploadform" enctype="multipart/form-data">
@@ -38,7 +39,6 @@
 </div>
 
 <div id="summary" class="page hide">
-    {>"layouts/header" /}
     <div class="content">
         <p>Your resume has been successfully uploaded!</p>
         <p>We will review your application and contact you if there's a match.</p>
