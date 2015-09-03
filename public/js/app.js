@@ -1,6 +1,7 @@
 'use strict';
 /* global $:false, document:false, window:false, alert:false, FormData:false */
 
+var MIN_FILE_SIZE = 5 * 1024; // 5KB - Anything less might be spam
 var MAX_FILE_SIZE = 20 * 1024 * 1024; // 20 MB
 var SUPPORTED_IMG_MIME_TYPES = new RegExp('image\/(?=jpeg|pjpeg|png)'); // JPG, PNG
 var SUPPORTED_FILE_MIME_TYPES = new RegExp(SUPPORTED_IMG_MIME_TYPES.source + '|application\/pdf|pplication\/msword|application\/vnd.openxmlformats-officedocument.wordprocessingml.document'); // ... + PDF, DOC, DOCX
@@ -54,6 +55,11 @@ $(document).ready(function () {
         // Test for supported files
         if (!SUPPORTED_FILE_MIME_TYPES.test(file.type)) {
             return alert('File unsupported!');
+        }
+
+        // Test for minimum file size
+        if (file.size < MIN_FILE_SIZE) {
+            return alert('File unsupported');
         }
 
         // Test for file size limits

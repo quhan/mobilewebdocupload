@@ -13,6 +13,7 @@ var S3_BUCKET = process.env.S3_BUCKET;
 aws.config.update({accessKeyId: AWS_ACCESS_KEY, secretAccessKey: AWS_SECRET_KEY});
 var UPLOAD_PATH = 'resume/';
 
+var MIN_FILE_SIZE = 5 * 1024; // 5KB - Anything less might be spam
 var MAX_FILE_SIZE = 20 * 1024 * 1024; // 20 MB
 var SUPPORTED_IMG_MIME_TYPES = new RegExp('image\/(?=jpeg|pjpeg|png)'); // JPG, PNG
 var SUPPORTED_FILE_MIME_TYPES = new RegExp(SUPPORTED_IMG_MIME_TYPES.source + '|application\/pdf|pplication\/msword|application\/vnd.openxmlformats-officedocument.wordprocessingml.document'); // ... + PDF, DOC, DOCX
@@ -40,6 +41,11 @@ function validateFiles(rawFiles, next) {
         if (rawFiles.hasOwnProperty(obj)) {
             var file = rawFiles[obj];
 
+            // Test if file is spam
+            if (file.size < MIN_FILE_SIZE) {
+                return next({status: 500}, null);
+            }
+
             // Test if the total payload size is above the limit
             if (totalPayloadSize + file.size > MAX_FILE_SIZE) {
                 return next({status: 413}, null);
@@ -56,7 +62,7 @@ function validateFiles(rawFiles, next) {
         }
     }
 
-    if (!files.length) {
+    if (!files.length && totalPayloadSize < MIN_FILE_SIZE) {
         return next({status: 500}, null);
     } else {
         return next(null, files);
