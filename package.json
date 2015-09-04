@@ -22,6 +22,7 @@
     "engine-munger": "^0.2.8",
     "express": "^4.12.2",
     "kraken-js": "^1.0.3",
+    "lodash": "^3.10.1",
     "moment": "^2.10.6",
     "shortid": "^2.2.2"
   },

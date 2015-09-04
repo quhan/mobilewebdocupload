@@ -1,5 +1,6 @@
 'use strict';
 
+var _ = require('lodash');
 var shortid = require('shortid');
 var moment = require('moment');
 var fs = require('fs');
@@ -37,30 +38,24 @@ function validateFiles(rawFiles, next) {
     var files = [];
     var totalPayloadSize = 0;
 
-    for (var obj in rawFiles) {
-        if (rawFiles.hasOwnProperty(obj)) {
-            var file = rawFiles[obj];
-
-            // Test if file is spam
-            if (file.size < MIN_FILE_SIZE) {
-                return next({status: 500}, null);
-            }
-
-            // Test if the total payload size is above the limit
-            if (totalPayloadSize + file.size > MAX_FILE_SIZE) {
-                return next({status: 413}, null);
-            } else {
-                totalPayloadSize += file.size;
-            }
-
-            // Test if an invalid file is detected
-            if (!SUPPORTED_FILE_MIME_TYPES.test(file.type)) {
-                return next({status: 422}, null);
-            }
-
-            files.push(file);
+    _.forOwn(rawFiles, function (file) { 
+        // Test if an invalid file is detected
+        if (!SUPPORTED_FILE_MIME_TYPES.test(file.type)) {
+            return next({status: 422}, null);
         }
-    }
+
+        if (file.size < MIN_FILE_SIZE) {
+            // Test if file is spam
+            return next({status: 500}, null);
+        } else if (totalPayloadSize + file.size > MAX_FILE_SIZE) {
+            // Test if the total payload size is above the limit
+            return next({status: 413}, null);
+        } else {
+            totalPayloadSize += file.size;
+        }
+
+        files.push(file);
+    });
 
     if (!files.length && totalPayloadSize < MIN_FILE_SIZE) {
         return next({status: 500}, null);
