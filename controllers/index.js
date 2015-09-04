@@ -10,7 +10,6 @@ var aws = require('aws-sdk');
 var AWS_ACCESS_KEY = process.env.AWS_ACCESS_KEY;
 var AWS_SECRET_KEY = process.env.AWS_SECRET_KEY;
 var S3_BUCKET = process.env.S3_BUCKET;
-
 aws.config.update({accessKeyId: AWS_ACCESS_KEY, secretAccessKey: AWS_SECRET_KEY});
 var UPLOAD_PATH = 'resume/';
 
@@ -91,10 +90,8 @@ function uploadToS3(zip, filePrefix, next) {
                 return next({status: 500, error: err}, null);
             }
 
-            // console.dir(result);
             return next(null, result);
         });
-
 }
 
 module.exports = function (router) {
