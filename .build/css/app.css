@@ -89,6 +89,7 @@ button {
   border: 0;
   border-radius: 5px;
   background-color: #fff;
+  cursor: pointer;
 }
 button.js-application-type {
   width: 285px;
